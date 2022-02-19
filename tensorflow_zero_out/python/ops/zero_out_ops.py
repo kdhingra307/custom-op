@@ -1,26 +1,30 @@
-# Copyright 2018 The Sonnet Authors. All Rights Reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-# ============================================================================
-"""Use zero_out ops in python."""
-
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
 from tensorflow.python.framework import load_library
 from tensorflow.python.platform import resource_loader
+from tensorflow.python.ops import summary_ops_v2
+import tensorflow as tf
+from tensorflow.python.eager import context
 
-zero_out_ops = load_library.load_op_library(
+import functools
+
+counter_ops = load_library.load_op_library(
     resource_loader.get_path_to_datafile('_zero_out_ops.so'))
-zero_out = zero_out_ops.zero_out
+#create_counter = counter_ops.summary_writer
+
+increment_counter = counter_ops.influx_writer
+
+def summary_writer(ip, port, token, project, experiment):
+    return summary_ops_v2._ResourceSummaryWriter(create_fn = lambda:
+                                               counter_ops.influx_writer(shared_name=context.anonymous_name()),
+                                               init_op_fn =
+                                               functools.partial(
+            counter_ops.create_testt_file_writer,
+            url=ip,
+            port=port,
+            token=token,
+            project = project,
+            experiment= experiment,
+            max_queue=tf.constant(10)))

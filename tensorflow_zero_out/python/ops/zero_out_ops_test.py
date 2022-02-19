@@ -1,18 +1,3 @@
-# Copyright 2018 The Sonnet Authors. All Rights Reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-# ============================================================================
-"""Tests for zero_out ops."""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
@@ -20,19 +5,29 @@ from __future__ import print_function
 import numpy as np
 
 from tensorflow.python.platform import test
-try:
-  from tensorflow_zero_out.python.ops.zero_out_ops import zero_out
-except ImportError:
-  from zero_out_ops import zero_out
+from counter_ops import create_counter, increment_counter
 
 
-class ZeroOutTest(test.TestCase):
-
-  def testZeroOut(self):
+class CounterTest(test.TestCase):
+  
+  def test_increment(self):
     with self.test_session():
-      self.assertAllClose(
-          zero_out([[1, 2], [3, 4]]), np.array([[1, 0], [0, 0]]))
+      counter = create_counter()
+      increment_counter(counter)
+      increment_counter(counter)
+      increment_counter(counter)
+      increment_counter(counter)
 
-
-if __name__ == '__main__':
-  test.main()
+# outputs the following:      
+'''
+count is 0. now it's 1
+count is 1. now it's 2
+count is 2. now it's 3
+count is 3. now it's 4
+INFO:tensorflow:time(__main__.CounterTest.test_increment): 0.01s
+I0630 13:58:10.023093 140402655590144 test_util.py:2103] time(__main__.CounterTest.test_increment): 0.01s
+[       OK ] CounterTest.test_increment
+[ RUN      ] CounterTest.test_session
+[  SKIPPED ] CounterTest.test_session
+[ RUN      ] ZeroOutTest.testZeroOut
+'''

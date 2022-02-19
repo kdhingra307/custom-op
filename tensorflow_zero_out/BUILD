@@ -12,6 +12,7 @@ cc_binary(
     srcs = [
         "cc/kernels/zero_out_kernels.cc",
         "cc/ops/zero_out_ops.cc",
+        "cc/kernels/influxdb.hpp"
     ],
     linkshared = 1,
     deps = [
@@ -24,7 +25,7 @@ cc_binary(
     }),
     copts = select({
         ":windows": ["/DEIGEN_STRONG_INLINE=inline", "-DTENSORFLOW_MONOLITHIC_BUILD", "/DPLATFORM_WINDOWS", "/DEIGEN_HAS_C99_MATH", "/DTENSORFLOW_USE_EIGEN_THREADPOOL", "/DEIGEN_AVOID_STL_ARRAY", "/Iexternal/gemmlowp", "/wd4018", "/wd4577", "/DNOGDI", "/UTF_COMPILE_LIBRARY"],
-        "//conditions:default": ["-pthread", "-std=c++11", "-D_GLIBCXX_USE_CXX11_ABI=0"],
+        "//conditions:default": ["-pthread", "-std=c++14", "-stdlib=libc++", "-D_GLIBCXX_USE_CXX11_ABI"],
     }),
 )
 
