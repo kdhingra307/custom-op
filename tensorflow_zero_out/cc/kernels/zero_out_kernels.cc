@@ -235,66 +235,7 @@ class InfluxWriter : public SummaryWriterInterface {
 
 }  // namespace
 
-Status CreateTesttFileWriter(const string& url, const int port, const string& project, const string& token, const string& experiment,  int max_queue, Env* env, SummaryWriterInterface** result) {
-  InfluxWriter* w = new InfluxWriter(experiment, max_queue, env);
-  const Status s = w->Initialize(url, port, token, project);
-  if (!s.ok()) {
-    w->Unref();
-    *result = nullptr;
-    return s;
-  }
-  *result = w;
-  return Status::OK();
-}
-
 REGISTER_KERNEL_BUILDER(Name("InfluxWriter").Device(DEVICE_CPU),
                         ResourceHandleOp<SummaryWriterInterface>);
 
-class CreateTesttFileWriterOp : public OpKernel {
- public:
-  explicit CreateTesttFileWriterOp(OpKernelConstruction* ctx)
-      : OpKernel(ctx) {}
-
-  void Compute(OpKernelContext* ctx) override {
-    const Tensor* tmp;
-    OP_REQUIRES_OK(ctx, ctx->input("url", &tmp));
-    OP_REQUIRES(ctx, TensorShapeUtils::IsScalar(tmp->shape()),
-                errors::InvalidArgument("url must be a scalar"));
-    const string url = tmp->scalar<tstring>()();
-    OP_REQUIRES_OK(ctx, ctx->input("port", &tmp));
-    OP_REQUIRES(ctx, TensorShapeUtils::IsScalar(tmp->shape()),
-                errors::InvalidArgument("port must be a scalar"));
-    const int port = tmp->scalar<int>()();
-
-    OP_REQUIRES_OK(ctx, ctx->input("project", &tmp));
-    OP_REQUIRES(ctx, TensorShapeUtils::IsScalar(tmp->shape()),
-                errors::InvalidArgument("project must be a scalar"));
-    const string project = tmp->scalar<tstring>()();
-    OP_REQUIRES_OK(ctx, ctx->input("token", &tmp));
-    OP_REQUIRES(ctx, TensorShapeUtils::IsScalar(tmp->shape()),
-                errors::InvalidArgument("token must be a scalar"));
-    const string token = tmp->scalar<tstring>()();
-    OP_REQUIRES_OK(ctx, ctx->input("experiment", &tmp));
-    OP_REQUIRES(ctx, TensorShapeUtils::IsScalar(tmp->shape()),
-                errors::InvalidArgument("experiment must be a scalar"));
-    const string experiment = tmp->scalar<tstring>()();
-
-    OP_REQUIRES_OK(ctx, ctx->input("max_queue", &tmp));
-    OP_REQUIRES(ctx, TensorShapeUtils::IsScalar(tmp->shape()),
-                errors::InvalidArgument("max queue must be a scalar"));
-    const int32_t max_queue = tmp->scalar<int>()();
-
-    core::RefCountPtr<SummaryWriterInterface> s;
-    OP_REQUIRES_OK(ctx, LookupOrCreateResource<SummaryWriterInterface>(
-                            ctx, HandleFromInput(ctx, 0), &s,
-                            [url, port, project, token, experiment, max_queue,
-                             ctx](SummaryWriterInterface** s) {
-                              return CreateTesttFileWriter(
-                                  url, port, project, token,
-                                 experiment,  max_queue, ctx->env(), s);
-                            }));
-  }
-};
-REGISTER_KERNEL_BUILDER(Name("CreateTesttFileWriter").Device(DEVICE_CPU),
-                        CreateTesttFileWriterOp);
 }

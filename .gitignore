@@ -1,0 +1,6 @@
+bazel-*
+artifacts
+.DS_Store
+.bazelrc
+tools
+default.nix

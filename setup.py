@@ -25,7 +25,7 @@ from setuptools.dist import Distribution
 
 __version__ = '0.0.1'
 REQUIRED_PACKAGES = [
-    'tensorflow_macos >= 2.1.0',
+    'tensorflow_macos == 2.8.0',
 ]
 project_name = 'tensorflow-custom-ops'
 
@@ -34,6 +34,7 @@ from setuptools.command.install import install
 class InstallPlatlib(install):
     def finalize_options(self):
         install.finalize_options(self)
+        print("-----", self.install_platlib)
         self.install_lib = self.install_platlib
 
 

@@ -10,13 +10,14 @@ REGISTER_OP("InfluxWriter")
     .Attr("container: string = ''")
     .SetShapeFn(shape_inference::ScalarShape);
 
-REGISTER_OP("CreateTesttFileWriter")
-    .Input("writer: resource")
-    .Input("url: string")
-    .Input("port: int32")
-    .Input("project: string")
-    .Input("token: string")
-    .Input("experiment: string")
-    .Input("max_queue: int32")
-    .SetShapeFn(shape_inference::NoOutputs);
 }
+//REGISTER_OP("CreateTesttFileWriter")
+//   .Input("writer: resource")
+//    .Input("url: string")
+//    .Input("port: int32")
+//    .Input("project: string")
+//    .Input("token: string")
+//    .Input("experiment: string")
+//    .Input("max_queue: int32")
+//    .SetShapeFn(shape_inference::NoOutputs);
+//}
